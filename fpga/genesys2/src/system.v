@@ -2,42 +2,50 @@
 
 module system
 (
-  input wire CLK200M_p,//GCLK-W19
+  input wire CLK200M_p, // Genesys2 has a differential LVDS 200MHz oscillator
   input wire CLK200M_n,
-  // input wire CLK32768KHZ,//RTC_CLK-Y18
 
-  input wire fpga_rst,//FPGA_RESET-T6 button When press = 1
-  input wire mcu_rst,//MCU_RESET-P20  button When press = 0
-
+  input wire fpga_rst,  // FPGA_RESET-R19 button. When pressing, value = 0
+  input wire mcu_rst,   // MCU_RESET-E18 button. ATTENTION: when pressing, value = 1. See: 13 Basic I/O Fig. 15
 
   // Dedicated QSPI interface
   output wire qspi0_cs,
-  // output wire qspi0_sck, //  Genesys2 dosen't have it
+  // output wire qspi0_sck, //  Genesys2 dosen't have it. See: 6.2 Quad-SPI Flash
   inout wire [3:0] qspi0_dq,
 
   //gpioA
-  inout wire [6:0] gpioA,//GPIOA00~GPIOA31
-  inout wire uart0_rx,
-  inout wire uart0_tx,
+  inout wire [5:0] gpioA, // GPIOA-0~5, here we use 6 gpios only
+  inout wire i2c0_scl,    // GPIOA-14. I2C0 SCL for power monitoring. See: 3 Power Monitoring
+  inout wire i2c0_sda,    // GPIOA-15. I2C0 SDA
+  
+  // TODO add power monitoring in SDK example
+  inout wire uart0_rx,    // GPIOA-16. Console UART RX for debugging
+  inout wire uart0_tx,    // GPIOA-17. Console UART TX for debugging
+  inout wire uart2_rx,    // GPIOA-18
+  inout wire uart2_tx,    // GPIOA-19
 
-  // Unused GPIOA 7~15 32-2-7=23
+  // OLED SPI CS is always active. See: 15 OLED
+  inout wire oled_sclk,   // GPIOA-8. OLED SPI sclk of Genesys2
+  inout wire oled_res,    // GPIOA-9. OLED Reset. Active-low
+  inout wire oled_dc,     // GPIOA-10. OLED SPI dc
+  inout wire oled_sdin,   // GPIOA-11. OLED SPI sdin
+  inout wire oled_vbat,   // GPIOA-12. OLED VBAT
+  inout wire oled_vdd,    // GPIOA-13. OLED VDD
 
   //gpioB
-  //inout wire [6:0] gpioB,//GPIOB00~GPIOB31
+  //inout wire [6:0] gpioB,// GPIOB00~GPIOB31
 
   // JD (used for JTAG connection)
-  inout wire mcu_TDO,//MCU_TDO-N17
-  inout wire mcu_TCK,//MCU_TCK-P15
-  inout wire mcu_TDI,//MCU_TDI-T18
-  inout wire mcu_TMS,//MCU_TMS-P17
+  inout wire mcu_TDO,   // MCU_TDO
+  inout wire mcu_TCK,   // MCU_TCK
+  inout wire mcu_TDI,   // MCU_TDI
+  inout wire mcu_TMS,   // MCU_TMS
 
   //pmu_wakeup
 
-  inout wire pmu_paden,  //PMU_VDDPADEN-U15
-  inout wire pmu_padrst, //PMU_VADDPARST_V15
-  inout wire mcu_wakeup,  //MCU_WAKE-N15
-  input wire debug_sw,
-  output wire debug_led
+  inout wire pmu_paden,  //PMU_VDDPADEN
+  inout wire pmu_padrst, //PMU_VADDPARST
+  inout wire mcu_wakeup  //MCU_WAKE
 );
 
   wire clk_out1;
@@ -62,7 +70,6 @@ module system
   wire dut_io_pads_jtag_TDO_o_oval;
   wire dut_io_pads_jtag_TDO_o_oe;
 
-  wire [31:0] gpioA;
   wire [32-1:0] dut_io_pads_gpioA_i_ival;
   wire [32-1:0] dut_io_pads_gpioA_o_oval;
   wire [32-1:0] dut_io_pads_gpioA_o_oe;
@@ -98,12 +105,11 @@ module system
 
   //=================================================
   // Clock & Reset
-  wire clk_8388;
-  wire clk_16M;
-  wire CLK32768KHZ;
+  wire clk_8388;    // 8.388MHz clock
+  wire clk_16M;     // 16MHz clock
+  wire CLK32768KHZ; // 32768KHz clock
 
   assign ck_rst = fpga_rst & (~mcu_rst);
-  assign debug_led = debug_sw;
 
   mmcm ip_mmcm
   (
@@ -116,7 +122,7 @@ module system
     .locked(mmcm_locked)
   );
 
-
+  // Clock divider
   sysclk_divider u_sysclk_divider(
     .clk8388(clk_8388),
     .rst_n(ck_rst),
@@ -157,7 +163,6 @@ module system
     .T(~qspi0_ui_dq_oe)
   );
 
-
   //=================================================
   // IOBUF instantiation for GPIOs
 
@@ -170,11 +175,13 @@ module system
   )
   gpioA_iobuf
   (
-    .O(dut_io_pads_gpioA_i_ival[6:0]),
-    .IO(gpioA[6:0]),
-    .I(dut_io_pads_gpioA_o_oval[6:0]),
-    .T(~dut_io_pads_gpioA_o_oe[6:0])
+    .O(dut_io_pads_gpioA_i_ival[5:0]),
+    .IO(gpioA[5:0]),
+    .I(dut_io_pads_gpioA_o_oval[5:0]),
+    .T(~dut_io_pads_gpioA_o_oe[5:0])
   );
+
+  // IOBUF instantiation for UART0
 
   IOBUF
   #(
@@ -183,13 +190,15 @@ module system
     .IOSTANDARD("DEFAULT"),
     .SLEW("SLOW")
   )
-  uart0_rx_iobuf
+  uart0_iobuf
   (
-    .O(dut_io_pads_gpioA_i_ival[16]),
-    .IO(uart0_rx),
-    .I(dut_io_pads_gpioA_o_oval[16]),
-    .T(~dut_io_pads_gpioA_o_oe[16])
+    .O(dut_io_pads_gpioA_i_ival[17:16]),
+    .IO({uart0_tx, uart0_rx}),
+    .I(dut_io_pads_gpioA_o_oval[17:16]),
+    .T(~dut_io_pads_gpioA_o_oe[17:16])
   );
+
+  // IOBUF instantiation for I2C0
 
   IOBUF
   #(
@@ -198,13 +207,32 @@ module system
     .IOSTANDARD("DEFAULT"),
     .SLEW("SLOW")
   )
-  uart0_tx_iobuf
+  i2c0_iobuf
   (
-    .O(dut_io_pads_gpioA_i_ival[17]),
-    .IO(uart0_tx),
-    .I(dut_io_pads_gpioA_o_oval[17]),
-    .T(~dut_io_pads_gpioA_o_oe[17])
+    .O(dut_io_pads_gpioA_i_ival[15:14]),
+    .IO({i2c0_sda, i2c0_scl}),
+    .I(dut_io_pads_gpioA_o_oval[15:14]),
+    .T(~dut_io_pads_gpioA_o_oe[15:14])
   );
+
+  // IOBUF instantiation for OLED SPI
+
+  IOBUF
+  #(
+    .DRIVE(12),
+    .IBUF_LOW_PWR("TRUE"),
+    .IOSTANDARD("DEFAULT"),
+    .SLEW("SLOW")
+  )
+  oled_spi_iobuf
+  (
+    .O(dut_io_pads_gpioA_i_ival[13:8]),
+    .IO({oled_vdd, oled_vbat, oled_sdin, oled_dc, oled_res, oled_sclk}),
+    .I(dut_io_pads_gpioA_o_oval[13:8]),
+    .T(~dut_io_pads_gpioA_o_oe[13:8])
+  );
+
+  // Disable gpioB for we don't use them
 
   // IOBUF
   // #(
@@ -431,10 +459,10 @@ module system
     .GTS        (1'b0),
     .KEYCLEARB  (1'b0),
     .PACK       (1'b0),
-    .USRCCLKO   (qspi0_sck),      // First three cycles after config ignored, see AR# 52626
-    .USRCCLKTS  (1'b0),     // 0 to enable CCLK output
-    .USRDONEO   (1'b1),     // Shouldn't matter if tristate is high, but generates a warning if tied low.
-    .USRDONETS  (1'b1)      // 1 to tristate DONE output
+    .USRCCLKO   (qspi0_sck),  // First three cycles after config ignored, see AR# 52626
+    .USRCCLKTS  (1'b0),       // 0 to enable CCLK output
+    .USRDONEO   (1'b1),       // Shouldn't matter if tristate is high, but generates a warning if tied low.
+    .USRDONETS  (1'b1)        // 1 to tristate DONE output
   );
 
 

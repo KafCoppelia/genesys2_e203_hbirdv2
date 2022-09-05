@@ -4,14 +4,14 @@
 // Engineer: 
 // 
 // Create Date: 08/31/2022 08:52:46 PM
-// Design Name: 
-// Module Name: divider
-// Project Name: 
+// Design Name: sysclk_divider
+// Module Name: sysclk_divider
+// Project Name: See top module
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description: Clock divider
 // 
-// Dependencies: 
+// Dependencies: None
 // 
 // Revision:
 // Revision 0.01 - File Created
@@ -20,11 +20,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module sysclk_divider(
-   input wire clk8388,  // 8.388MHz
+   input wire clk8388,  // 8.388MHz output from mmcm
    input wire rst_n,
-   output reg clk32768   // 32768KHz
+   output reg clk32768  // 32768KHz clock for always-on domain
 );
-	parameter NUM_DIV = 9'd256; // Approximately
+	parameter NUM_DIV = 9'd256;
     reg [8:0] cnt;
     
     always @(posedge clk8388 or negedge rst_n) begin
