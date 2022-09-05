@@ -18,6 +18,7 @@ install:
 	mkdir -p ${PWD}/install
 	cp ${PWD}/../rtl/${CORE} ${INSTALL_RTL} -rf
 	cp ${FPGA_DIR}/src/system.v ${INSTALL_RTL}/system.v -rf
+	cp ${FPGA_DIR}/src/system.v ${INSTALL_RTL}/sysclk_divider.v -rf
 	sed -i '1i\`define FPGA_SOURCE\'  ${INSTALL_RTL}/core/${CORE}_defines.v
 
 EXTRA_FPGA_VSRCS := 

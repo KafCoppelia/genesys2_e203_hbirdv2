@@ -1,2 +1,6 @@
 riscv-tools/prebuilt_tools/prefix/*
 doc/build
+fpga/install
+fpga/*/.ip_user_files
+fpga/*/.Xil
+fpga/*/obj
