@@ -14,24 +14,28 @@ module system
   inout wire [3:0] qspi0_dq,
 
   //gpioA
-  inout wire [5:0] gpioA, // GPIOA-0~5, here we use 6 gpios only
-  inout wire i2c0_scl,    // GPIOA-14. I2C0 SCL for power monitoring. See: 3 Power Monitoring
-  inout wire i2c0_sda,    // GPIOA-15. I2C0 SDA
+  inout wire [5:0] gpioA, // GPIOA-0~5, here we use 29 gpios only
+  /*
+  * OLED SPI CS is always active. See: 15 OLED
+  * GPIOA8  SCLK. OLED SPI sclk of Genesys2
+  * GPIOA9  RES. OLED Reset. Active-low
+  * GPIOA10 DC. OLED SPI dc
+  * GPIOA11 SDIN. OLED SPI sdin
+  * GPIOA12 VBAT
+  * GPIOA13 VDD
+  */
+
+  /*
+  * GPIOA14 I2C0 SCL for power monitoring. See: 3 Power Monitoring
+  * GPIOA15 I2C0 SDA
+  * GPIOA16 UART0 RX. Console UART RX for debugging
+  * GPIOA17 UART0 TX. Console UART TX for debugging
+  * GPIOA18 UART2 RX
+  * GPIOA19 UART2 TX
+  */
+  inout wire uart0_rx,
+  inout wire uart0_tx,
   
-  // TODO add power monitoring in SDK example
-  inout wire uart0_rx,    // GPIOA-16. Console UART RX for debugging
-  inout wire uart0_tx,    // GPIOA-17. Console UART TX for debugging
-  inout wire uart2_rx,    // GPIOA-18
-  inout wire uart2_tx,    // GPIOA-19
-
-  // OLED SPI CS is always active. See: 15 OLED
-  inout wire oled_sclk,   // GPIOA-8. OLED SPI sclk of Genesys2
-  inout wire oled_res,    // GPIOA-9. OLED Reset. Active-low
-  inout wire oled_dc,     // GPIOA-10. OLED SPI dc
-  inout wire oled_sdin,   // GPIOA-11. OLED SPI sdin
-  inout wire oled_vbat,   // GPIOA-12. OLED VBAT
-  inout wire oled_vdd,    // GPIOA-13. OLED VDD
-
   //gpioB
   //inout wire [6:0] gpioB,// GPIOB00~GPIOB31
 
@@ -48,11 +52,8 @@ module system
   inout wire mcu_wakeup  //MCU_WAKE
 );
 
-  wire clk_out1;
   wire mmcm_locked;
-
   wire reset_periph;
-
   wire ck_rst;
 
   // All wires connected to the chip top
@@ -181,8 +182,6 @@ module system
     .T(~dut_io_pads_gpioA_o_oe[5:0])
   );
 
-  // IOBUF instantiation for UART0
-
   IOBUF
   #(
     .DRIVE(12),
@@ -190,16 +189,14 @@ module system
     .IOSTANDARD("DEFAULT"),
     .SLEW("SLOW")
   )
-  uart0_iobuf
+  uart0_rx_iobuf
   (
-    .O(dut_io_pads_gpioA_i_ival[17:16]),
-    .IO({uart0_tx, uart0_rx}),
-    .I(dut_io_pads_gpioA_o_oval[17:16]),
-    .T(~dut_io_pads_gpioA_o_oe[17:16])
+    .O(dut_io_pads_gpioA_i_ival[16]),
+    .IO(uart0_rx),
+    .I(dut_io_pads_gpioA_o_oval[16]),
+    .T(~dut_io_pads_gpioA_o_oe[16])
   );
 
-  // IOBUF instantiation for I2C0
-
   IOBUF
   #(
     .DRIVE(12),
@@ -207,29 +204,12 @@ module system
     .IOSTANDARD("DEFAULT"),
     .SLEW("SLOW")
   )
-  i2c0_iobuf
+  uart0_tx_iobuf
   (
-    .O(dut_io_pads_gpioA_i_ival[15:14]),
-    .IO({i2c0_sda, i2c0_scl}),
-    .I(dut_io_pads_gpioA_o_oval[15:14]),
-    .T(~dut_io_pads_gpioA_o_oe[15:14])
-  );
-
-  // IOBUF instantiation for OLED SPI
-
-  IOBUF
-  #(
-    .DRIVE(12),
-    .IBUF_LOW_PWR("TRUE"),
-    .IOSTANDARD("DEFAULT"),
-    .SLEW("SLOW")
-  )
-  oled_spi_iobuf
-  (
-    .O(dut_io_pads_gpioA_i_ival[13:8]),
-    .IO({oled_vdd, oled_vbat, oled_sdin, oled_dc, oled_res, oled_sclk}),
-    .I(dut_io_pads_gpioA_o_oval[13:8]),
-    .T(~dut_io_pads_gpioA_o_oe[13:8])
+    .O(dut_io_pads_gpioA_i_ival[17]),
+    .IO(uart0_tx),
+    .I(dut_io_pads_gpioA_o_oval[17]),
+    .T(~dut_io_pads_gpioA_o_oe[17])
   );
 
   // Disable gpioB for we don't use them
