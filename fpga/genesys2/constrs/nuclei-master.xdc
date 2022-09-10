@@ -16,30 +16,30 @@ set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets IOBUF_jtag_TCK/O]
 
 ## Buttons
 set_property -dict { PACKAGE_PIN E18   IOSTANDARD LVCMOS12 } [get_ports { mcu_rst }]; #IO_25_17 Sch=btnc
-# set_property -dict { PACKAGE_PIN M19   IOSTANDARD LVCMOS12 } [get_ports { gpioA[6] }]; #IO_0_15 Sch=btnd
-# set_property -dict { PACKAGE_PIN M20   IOSTANDARD LVCMOS12 } [get_ports { gpioA[7] }]; #IO_L6P_T0_15 Sch=btnl
-# set_property -dict { PACKAGE_PIN C19   IOSTANDARD LVCMOS12 } [get_ports { gpioA[20] }]; #IO_L24P_T3_17 Sch=btnr
-# set_property -dict { PACKAGE_PIN B19   IOSTANDARD LVCMOS12 } [get_ports { gpioA[21] }]; #IO_L24N_T3_17 Sch=btnu
-set_property -dict {PACKAGE_PIN R19   IOSTANDARD LVCMOS33} [get_ports { fpga_rst }]
+set_property -dict { PACKAGE_PIN M19   IOSTANDARD LVCMOS12 } [get_ports { btnd }]; #IO_0_15 Sch=btnd
+set_property -dict { PACKAGE_PIN M20   IOSTANDARD LVCMOS12 } [get_ports { btnl }]; #IO_L6P_T0_15 Sch=btnl
+set_property -dict { PACKAGE_PIN C19   IOSTANDARD LVCMOS12 } [get_ports { btnr }]; #IO_L24P_T3_17 Sch=btnr
+set_property -dict { PACKAGE_PIN B19   IOSTANDARD LVCMOS12 } [get_ports { btnu }]; #IO_L24N_T3_17 Sch=btnu
+set_property -dict { PACKAGE_PIN R19   IOSTANDARD LVCMOS33 } [get_ports { fpga_rst }]
 
 ## LEDs
-set_property -dict {PACKAGE_PIN T28  IOSTANDARD LVCMOS33} [get_ports { gpioA[0] }]
-set_property -dict {PACKAGE_PIN V19  IOSTANDARD LVCMOS33} [get_ports { gpioA[1] }]
-set_property -dict {PACKAGE_PIN U30  IOSTANDARD LVCMOS33} [get_ports { gpioA[2] }]
-set_property -dict {PACKAGE_PIN U29  IOSTANDARD LVCMOS33} [get_ports { gpioA[3] }]
-set_property -dict {PACKAGE_PIN V20  IOSTANDARD LVCMOS33} [get_ports { gpioA[4] }]
-set_property -dict {PACKAGE_PIN V26  IOSTANDARD LVCMOS33} [get_ports { gpioA[5] }]
-set_property -dict {PACKAGE_PIN W24  IOSTANDARD LVCMOS33} [get_ports { pmu_paden }]
-set_property -dict {PACKAGE_PIN W23  IOSTANDARD LVCMOS33} [get_ports { pmu_padrst }]
+set_property -dict { PACKAGE_PIN T28  IOSTANDARD LVCMOS33 } [get_ports { led[0] }]
+set_property -dict { PACKAGE_PIN V19  IOSTANDARD LVCMOS33 } [get_ports { led[1] }]
+set_property -dict { PACKAGE_PIN U30  IOSTANDARD LVCMOS33 } [get_ports { led[2] }]
+set_property -dict { PACKAGE_PIN U29  IOSTANDARD LVCMOS33 } [get_ports { led[3] }]
+set_property -dict { PACKAGE_PIN V20  IOSTANDARD LVCMOS33 } [get_ports { led[4] }]
+set_property -dict { PACKAGE_PIN V26  IOSTANDARD LVCMOS33 } [get_ports { led[5] }]
+set_property -dict { PACKAGE_PIN W24  IOSTANDARD LVCMOS33 } [get_ports { pmu_paden }]
+set_property -dict { PACKAGE_PIN W23  IOSTANDARD LVCMOS33 } [get_ports { pmu_padrst }]
 
 ## Switches
-# set_property -dict { PACKAGE_PIN G19   IOSTANDARD LVCMOS12 } [get_ports { gpioA[22] }]; #IO_0_17 Sch=sw[0]
-# set_property -dict { PACKAGE_PIN G25   IOSTANDARD LVCMOS12 } [get_ports { gpioA[23] }]; #IO_25_16 Sch=sw[1]
-# set_property -dict { PACKAGE_PIN H24   IOSTANDARD LVCMOS12 } [get_ports { gpioA[24] }]; #IO_L19P_T3_16 Sch=sw[2]
-# set_property -dict { PACKAGE_PIN K19   IOSTANDARD LVCMOS12 } [get_ports { gpioA[25] }]; #IO_L6P_T0_17 Sch=sw[3]
-# set_property -dict { PACKAGE_PIN N19   IOSTANDARD LVCMOS12 } [get_ports { gpioA[26] }]; #IO_L19P_T3_A22_15 Sch=sw[4]
-# set_property -dict { PACKAGE_PIN P19   IOSTANDARD LVCMOS12 } [get_ports { gpioA[27] }]; #IO_25_15 Sch=sw[5]
-# set_property -dict { PACKAGE_PIN P26   IOSTANDARD LVCMOS33 } [get_ports { gpioA[28] }]; #IO_L10P_T1_D14_14 Sch=sw[6]
+set_property -dict { PACKAGE_PIN G19   IOSTANDARD LVCMOS12 } [get_ports { sw[0] }]; #IO_0_17 Sch=sw[0]
+set_property -dict { PACKAGE_PIN G25   IOSTANDARD LVCMOS12 } [get_ports { sw[1] }]; #IO_25_16 Sch=sw[1]
+set_property -dict { PACKAGE_PIN H24   IOSTANDARD LVCMOS12 } [get_ports { sw[2] }]; #IO_L19P_T3_16 Sch=sw[2]
+set_property -dict { PACKAGE_PIN K19   IOSTANDARD LVCMOS12 } [get_ports { sw[3] }]; #IO_L6P_T0_17 Sch=sw[3]
+set_property -dict { PACKAGE_PIN N19   IOSTANDARD LVCMOS12 } [get_ports { sw[4] }]; #IO_L19P_T3_A22_15 Sch=sw[4]
+set_property -dict { PACKAGE_PIN P19   IOSTANDARD LVCMOS12 } [get_ports { sw[5] }]; #IO_25_15 Sch=sw[5]
+set_property -dict { PACKAGE_PIN P26   IOSTANDARD LVCMOS33 } [get_ports { sw[6] }]; #IO_L10P_T1_D14_14 Sch=sw[6]
 set_property -dict { PACKAGE_PIN P27   IOSTANDARD LVCMOS33 } [get_ports { mcu_wakeup }]; #IO_L8P_T1_D11_14 Sch=sw[7]
 
 ## USB HIDs
@@ -49,8 +49,8 @@ set_property -dict { PACKAGE_PIN P27   IOSTANDARD LVCMOS33 } [get_ports { mcu_wa
 #set_property -dict { PACKAGE_PIN AE25  IOSTANDARD LVCMOS33 } [get_ports { ps2_data[1] }]; #IO_L16P_T2_12 Sch=ps2_data[1]
 
 ## UART
-# set_property -dict { PACKAGE_PIN Y23   IOSTANDARD LVCMOS33 } [get_ports { gpioA[19] }]; #IO_L1P_T0_12 Sch=uart_rx_out
-# set_property -dict { PACKAGE_PIN Y20   IOSTANDARD LVCMOS33 } [get_ports { gpioA[18] }]; #IO_0_12 Sch=uart_tx_in
+set_property -dict { PACKAGE_PIN Y23   IOSTANDARD LVCMOS33 } [get_ports { uart2_rx }]; #IO_L1P_T0_12 Sch=uart_rx_out
+set_property -dict { PACKAGE_PIN Y20   IOSTANDARD LVCMOS33 } [get_ports { uart2_tx }]; #IO_0_12 Sch=uart_tx_in
 
 ## SD Card
 #set_property -dict { PACKAGE_PIN P28   IOSTANDARD LVCMOS33 } [get_ports { sd_cd }]; #IO_L8N_T1_D12_14 Sch=sd_cd
@@ -396,11 +396,11 @@ set_property -dict { PACKAGE_PIN AG30   IOSTANDARD LVCMOS33 } [get_ports { uart0
 #set_property -dict { PACKAGE_PIN AC27  IOSTANDARD LVCMOS33 } [get_ports { PROG_WRN }]; #IO_L12N_T1_MRCC_13 Sch=prog_wrn
 
 ## QSPI
-set_property -dict {PACKAGE_PIN U19 IOSTANDARD LVCMOS33} [get_ports { qspi0_cs }]
-set_property -dict {PACKAGE_PIN P24 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE} [get_ports {qspi0_dq[0]}]
-set_property -dict {PACKAGE_PIN R25 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE} [get_ports {qspi0_dq[1]}]
-set_property -dict {PACKAGE_PIN R20 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE} [get_ports {qspi0_dq[2]}]
-set_property -dict {PACKAGE_PIN R21 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE} [get_ports {qspi0_dq[3]}]
+set_property -dict { PACKAGE_PIN U19 IOSTANDARD LVCMOS33 } [get_ports { qspi0_cs }]
+set_property -dict { PACKAGE_PIN P24 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE } [get_ports {qspi0_dq[0]}]
+set_property -dict { PACKAGE_PIN R25 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE } [get_ports {qspi0_dq[1]}]
+set_property -dict { PACKAGE_PIN R20 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE } [get_ports {qspi0_dq[2]}]
+set_property -dict { PACKAGE_PIN R21 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE } [get_ports {qspi0_dq[3]}]
 
 ## IIC Bus
 # set_property -dict { PACKAGE_PIN AE30 IOSTANDARD LVCMOS33 } [get_ports { gpioA[14] }]; #IO_L16P_T2_13 Sch=sys_scl

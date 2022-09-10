@@ -14,7 +14,43 @@ module system
   inout wire [3:0] qspi0_dq,
 
   //gpioA
-  inout wire [5:0] gpioA, // GPIOA-0~5, here we use 29 gpios only
+  // inout wire [7:0] gpioA, // GPIOA-0~28, use 29 gpios of port A
+
+  /*
+  * Leds on board
+  * GPIOA0 LED0
+  * GPIOA1 LED1
+  * GPIOA2 LED2
+  * GPIOA3 LED3
+  * GPIOA4 LED4
+  * GPIOA5 LED5
+  */
+  inout wire [5:0] led,
+
+  /*
+  * switches on board
+  * GPIOA22 SW0
+  * GPIOA23 SW1
+  * GPIOA24 SW2
+  * GPIOA25 SW3
+  * GPIOA26 SW4
+  * GPIOA27 SW5
+  * GPIOA28 SW6
+  */
+  inout wire [6:0] sw,
+
+  /*
+  * Buttons on board
+  * GPIOA6  btnd
+  * GPIOA7  btnl
+  * GPIOA20 btnr
+  * GPIOA21 btnu
+  */
+  inout wire btnd,
+  inout wire btnl,
+  inout wire btnr,
+  inout wire btnu,
+  
   /*
   * OLED SPI CS is always active. See: 15 OLED
   * GPIOA8  SCLK. OLED SPI sclk of Genesys2
@@ -35,6 +71,8 @@ module system
   */
   inout wire uart0_rx,
   inout wire uart0_tx,
+  inout wire uart2_rx,
+  inout wire uart2_tx,
   
   //gpioB
   //inout wire [6:0] gpioB,// GPIOB00~GPIOB31
@@ -167,6 +205,21 @@ module system
   //=================================================
   // IOBUF instantiation for GPIOs
 
+  // IOBUF
+  // #(
+  //   .DRIVE(12),
+  //   .IBUF_LOW_PWR("TRUE"),
+  //   .IOSTANDARD("DEFAULT"),
+  //   .SLEW("SLOW")
+  // )
+  // gpioA_iobuf
+  // (
+  //   .O(dut_io_pads_gpioA_i_ival[7:0]),
+  //   .IO(gpioA[7:0]),
+  //   .I(dut_io_pads_gpioA_o_oval[7:0]),
+  //   .T(~dut_io_pads_gpioA_o_oe[7:0])
+  // );
+
   IOBUF
   #(
     .DRIVE(12),
@@ -174,12 +227,27 @@ module system
     .IOSTANDARD("DEFAULT"),
     .SLEW("SLOW")
   )
-  gpioA_iobuf
+  led_iobuf
   (
     .O(dut_io_pads_gpioA_i_ival[5:0]),
-    .IO(gpioA[5:0]),
+    .IO(led[5:0]),
     .I(dut_io_pads_gpioA_o_oval[5:0]),
     .T(~dut_io_pads_gpioA_o_oe[5:0])
+  );
+
+  IOBUF
+  #(
+    .DRIVE(12),
+    .IBUF_LOW_PWR("TRUE"),
+    .IOSTANDARD("DEFAULT"),
+    .SLEW("SLOW")
+  )
+  sw_iobuf
+  (
+    .O(dut_io_pads_gpioA_i_ival[28:22]),
+    .IO(sw[6:0]),
+    .I(dut_io_pads_gpioA_o_oval[28:22]),
+    .T(~dut_io_pads_gpioA_o_oe[28:22])
   );
 
   IOBUF
@@ -196,7 +264,7 @@ module system
     .I(dut_io_pads_gpioA_o_oval[16]),
     .T(~dut_io_pads_gpioA_o_oe[16])
   );
-
+  
   IOBUF
   #(
     .DRIVE(12),
@@ -210,6 +278,96 @@ module system
     .IO(uart0_tx),
     .I(dut_io_pads_gpioA_o_oval[17]),
     .T(~dut_io_pads_gpioA_o_oe[17])
+  );
+
+  IOBUF
+  #(
+    .DRIVE(12),
+    .IBUF_LOW_PWR("TRUE"),
+    .IOSTANDARD("DEFAULT"),
+    .SLEW("SLOW")
+  )
+  uart2_rx_iobuf
+  (
+    .O(dut_io_pads_gpioA_i_ival[18]),
+    .IO(uart2_rx),
+    .I(dut_io_pads_gpioA_o_oval[18]),
+    .T(~dut_io_pads_gpioA_o_oe[18])
+  );
+
+  IOBUF
+  #(
+    .DRIVE(12),
+    .IBUF_LOW_PWR("TRUE"),
+    .IOSTANDARD("DEFAULT"),
+    .SLEW("SLOW")
+  )
+  uart2_tx_iobuf
+  (
+    .O(dut_io_pads_gpioA_i_ival[19]),
+    .IO(uart2_tx),
+    .I(dut_io_pads_gpioA_o_oval[19]),
+    .T(~dut_io_pads_gpioA_o_oe[19])
+  );
+
+  IOBUF
+  #(
+    .DRIVE(12),
+    .IBUF_LOW_PWR("TRUE"),
+    .IOSTANDARD("DEFAULT"),
+    .SLEW("SLOW")
+  )
+  btnd_iobuf
+  (
+    .O(dut_io_pads_gpioA_i_ival[6]),
+    .IO(btnd),
+    .I(dut_io_pads_gpioA_o_oval[6]),
+    .T(~dut_io_pads_gpioA_o_oe[6])
+  );
+
+  IOBUF
+  #(
+    .DRIVE(12),
+    .IBUF_LOW_PWR("TRUE"),
+    .IOSTANDARD("DEFAULT"),
+    .SLEW("SLOW")
+  )
+  btnl_iobuf
+  (
+    .O(dut_io_pads_gpioA_i_ival[7]),
+    .IO(btnl),
+    .I(dut_io_pads_gpioA_o_oval[7]),
+    .T(~dut_io_pads_gpioA_o_oe[7])
+  );
+
+  IOBUF
+  #(
+    .DRIVE(12),
+    .IBUF_LOW_PWR("TRUE"),
+    .IOSTANDARD("DEFAULT"),
+    .SLEW("SLOW")
+  )
+  btnr_iobuf
+  (
+    .O(dut_io_pads_gpioA_i_ival[20]),
+    .IO(btnr),
+    .I(dut_io_pads_gpioA_o_oval[20]),
+    .T(~dut_io_pads_gpioA_o_oe[20])
+  );
+
+  IOBUF
+  #(
+    .DRIVE(12),
+    .IBUF_LOW_PWR("TRUE"),
+    .IOSTANDARD("DEFAULT"),
+    .SLEW("SLOW")
+  )
+  btnu_iobuf
+  (
+    .O(dut_io_pads_gpioA_i_ival[21]),
+    .IO(btnu),
+    .I(dut_io_pads_gpioA_o_oval[21]),
+    .T(~dut_io_pads_gpioA_o_oe[21])
   );
 
   // Disable gpioB for we don't use them
