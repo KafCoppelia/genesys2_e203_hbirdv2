@@ -5,8 +5,8 @@ Genesys2 E203内核移植指南
 
 本仓库fork自[riscv-mcu/e203_hbirdv2](https://github.com/riscv-mcu/e203_hbirdv2)，并在此基础上：
 
-1. 完成E203在Genesys2的移植，工程位于 `./fpga/genesys2，`包括适配Genesys2的顶层文件、约束文件，及相关 `make`操作，这使得综合、实现、生成mcs文件的命令与芯来官方的[文档](https://doc.nucleisys.com/hbirdv2/index.html)一致
-2. 完成SDK在Genesys2上的适配，该部分参见[SDK on Genesys2](https://github.com/KafCoppelia/genesys2_hbird-sdk)，详见该仓库README
+1. 完成E203在Genesys2的移植，工程位于 `./fpga/genesys2`，包括适配Genesys2的顶层文件、约束文件，及相关 `make`操作，这使得综合、实现、生成mcs文件的命令与芯来官方的[文档](https://doc.nucleisys.com/hbirdv2/index.html)一致
+2. 完成SDK在Genesys2上的适配，该部分参见[KafCoppelia/genesys2_hbird-sdk](https://github.com/KafCoppelia/genesys2_hbird-sdk)，详见该仓库README
 3. 移除E203内核的仿真、测试工程，该部分非本仓库重点
 
 ## 关于Genesys2
@@ -26,8 +26,8 @@ Genesys2 E203内核移植指南
 1. 时钟，Genesys2时钟为一200MHz**差分时钟**，而非单端时钟，顶层端口需修改如下：
 
 ```verilog
-  input wire CLK200M_p, // Genesys2 has a differential LVDS 200MHz oscillator
-  input wire CLK200M_n,
+input wire CLK200M_p, // Genesys2 has a differential LVDS 200MHz oscillator
+input wire CLK200M_n,
 ```
 
 时钟使用 `ip_mmcm` 生成16MHz与8.388MHz，再将8.388MHz通过简单的分频器获得32768Hz低频时钟。实际使用MMCM，无法精确获得8.388MHz。
@@ -58,9 +58,9 @@ sysclk_divider u_sysclk_divider(
 );
 ```
 
-其中 `sysclk_divider` 代码位于  `./src/sysclk_divider.v`，在顶层中例化。
+其中，`sysclk_divider` 代码位于  `./src/sysclk_divider.v`，在顶层中例化。
 
-2. 复位，若遵照原顶层的设计，需要 `fpga_rst`与 `mcu_rst`。Genesys2开发板上CPU Reset(R19)，按下时为低电平，松开为高电平，而其他按键(BTNx)则是按下时为高电平。因此时钟复位信号 `ck_rst`：
+2. 复位，若遵照原顶层的设计，需要 `fpga_rst`与 `mcu_rst`两个复位。请注意，Genesys2开发板CPU Reset(R19)，按下时为低电平，松开为高电平，而其他按键(BTNx)则是按下时为高电平。因此时钟复位信号 `ck_rst`：
 
 ```verilog
 assign ck_rst = fpga_rst & (~mcu_rst);
@@ -94,9 +94,9 @@ STARTUPE2
 );
 ```
 
-⚠️ SCK Is only available via the STARTUPE2 primitive
+⚠️ SCK is only available via the STARTUPE2 primitive
 
-若选择ROM启动，则修改 `dut_io_pads_bootrom_n_i_ival = 1'b0`，及其他必要的修改。
+若选择ROM启动，则修改 `assign dut_io_pads_bootrom_n_i_ival = 1'b0`，及其他必要的修改。
 
 4. GPIO，自定义约束Genesys2开发板的GPIO口。本仓库仅约束了部分GPIO口，例如LED、拨码开关、按键、串口、JTAG等：
 
@@ -187,7 +187,7 @@ uart0_rx_iobuf
 
 如此，完成对UART0 RX端口约束，将其约束在E203的GPIOA[16]。
 
-⚠️ 注意，需要对照E203的IOF与GPIO对应表，实现特定功能IO口（例如，UART、I2C、SPI等）的约束。
+⚠️ 注意，需要对照E203的[IOF与GPIO对应表](https://doc.nucleisys.com/hbirdv2/soc_peripherals/ips.html#sw-or-iof-configuration)，实现特定功能IO口（例如，UART、I2C、SPI等）的约束。
 
 ### FPGA约束
 
