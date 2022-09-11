@@ -3,4 +3,6 @@ install
 vivado.*
 common.mk.real
 common.mk.github
-
+.ip_user_files
+.Xil
+obj

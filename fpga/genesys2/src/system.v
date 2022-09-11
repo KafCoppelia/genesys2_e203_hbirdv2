@@ -146,7 +146,7 @@ module system
   // Clock & Reset
   wire clk_8388;    // 8.388MHz clock
   wire clk_16M;     // 16MHz clock
-  wire CLK32768KHZ; // 32768KHz clock
+  wire clk_32768;   // 32768KHz clock
 
   assign ck_rst = fpga_rst & (~mcu_rst);
 
@@ -165,7 +165,7 @@ module system
   sysclk_divider u_sysclk_divider(
     .clk8388(clk_8388),
     .rst_n(ck_rst),
-    .clk32768(CLK32768KHZ)
+    .clk32768(clk_32768)
   );
 
   reset_sys ip_reset_sys

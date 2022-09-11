@@ -9,7 +9,7 @@ set_property CONFIG_VOLTAGE 3.3 [current_design]
 ## Clock Signal
 set_property -dict {PACKAGE_PIN AD11  IOSTANDARD LVDS} [get_ports { CLK200M_n }]
 set_property -dict {PACKAGE_PIN AD12  IOSTANDARD LVDS} [get_ports { CLK200M_p }]
-create_clock -add -name sys_clk_pin -period 5 -waveform {0 2.5} [get_ports { CLK200M_p }];
+create_clock -add -name sys_clk_pin -period 5 -waveform {0 2.5} [get_ports { CLK200M_p }]
 
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets dut_io_pads_jtag_TCK_i_ival]
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets IOBUF_jtag_TCK/O]
@@ -20,7 +20,7 @@ set_property -dict { PACKAGE_PIN M19   IOSTANDARD LVCMOS12 } [get_ports { btnd }
 set_property -dict { PACKAGE_PIN M20   IOSTANDARD LVCMOS12 } [get_ports { btnl }]; #IO_L6P_T0_15 Sch=btnl
 set_property -dict { PACKAGE_PIN C19   IOSTANDARD LVCMOS12 } [get_ports { btnr }]; #IO_L24P_T3_17 Sch=btnr
 set_property -dict { PACKAGE_PIN B19   IOSTANDARD LVCMOS12 } [get_ports { btnu }]; #IO_L24N_T3_17 Sch=btnu
-set_property -dict { PACKAGE_PIN R19   IOSTANDARD LVCMOS33 } [get_ports { fpga_rst }]
+set_property -dict { PACKAGE_PIN R19   IOSTANDARD LVCMOS33 } [get_ports { fpga_rst }];
 
 ## LEDs
 set_property -dict { PACKAGE_PIN T28  IOSTANDARD LVCMOS33 } [get_ports { led[0] }]
@@ -436,6 +436,7 @@ set_property -dict { PACKAGE_PIN R21 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE } 
 #set_property -dict { PACKAGE_PIN AA17  IOSTANDARD LVCMOS18 } [get_ports { USB_OTG_STP }]; #IO_L23P_T3_32 Sch=usb_otg_stp
 #set_property -dict { PACKAGE_PIN AF16  IOSTANDARD LVCMOS18 } [get_ports { USB_OTG_VBUSOC }]; #IO_L6N_T0_VREF_32 Sch=usb_otg_vbusoc
 
+#####         SPI Configurate Setting        #######
 set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
 set_property CONFIG_MODE SPIx4 [current_design]
 set_property BITSTREAM.CONFIG.CONFIGRATE 50 [current_design]
