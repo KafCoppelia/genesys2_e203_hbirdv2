@@ -3,11 +3,11 @@ Genesys2 E203内核移植指南
 
 ## 关于本仓库
 
-本仓库fork自[riscv-mcu/e203_hbirdv2](https://github.com/riscv-mcu/e203_hbirdv2)，并在此基础上：
+本仓库在[riscv-mcu/e203_hbirdv2](https://github.com/riscv-mcu/e203_hbirdv2)基础上，做出如下修改：
 
-1. 完成E203在Genesys2的移植，工程位于 `./fpga/genesys2`，包括适配Genesys2的顶层文件、约束文件，及相关 `make`操作，这使得综合、实现、生成mcs文件的命令与芯来官方的[文档](https://doc.nucleisys.com/hbirdv2/index.html)一致
+1. 完成E203在Genesys2的移植，工程位于 `./fpga/genesys2`，包括适配Genesys2的顶层文件、约束文件，及相关 `make`操作，这使得综合、实现、生成mcs文件的命令与芯来[官方文档](https://doc.nucleisys.com/hbirdv2/index.html)一致
 2. 完成SDK在Genesys2上的适配，该部分参见[KafCoppelia/genesys2_hbird-sdk](https://github.com/KafCoppelia/genesys2_hbird-sdk)，详见该仓库README
-3. 移除E203内核的仿真、测试工程，该部分非本仓库重点
+3. 移除E203内核的仿真、测试部分的工程，该部分非本仓库重点
 
 ## 关于Genesys2
 
@@ -35,9 +35,11 @@ input wire CLK200M_n,
 👉 可替换MMCM为PLL
 
 ```verilog
-wire clk_8388;    // 8.388MHz clock
-wire clk_16M;     // 16MHz clock
-wire clk_32768;   // 32768KHz clock
+wire CLK8p388MHZ; // 8.388MHz clock
+wire CLK16MHZ;    // 16MHz clock
+wire CLK32768HZ;  // 32768KHz clock
+
+assign ck_rst = fpga_rst & (~mcu_rst);
 
 mmcm ip_mmcm
 (
@@ -45,28 +47,28 @@ mmcm ip_mmcm
   .clk_in1_p(CLK200M_p),
   .clk_in1_n(CLK200M_n),
 
-  .clk_out1(clk_16M), // 16 MHz, this clock we set to 16MHz
-  .clk_out2(clk_8388),
+  .clk_out1(CLK16MHZ), // 16 MHz, this clock we set to 16MHz
+  .clk_out2(CLK8p388MHZ),
   .locked(mmcm_locked)
 );
 
 // Clock divider
 sysclk_divider u_sysclk_divider(
-  .clk8388(clk_8388),
+  .clk8388(CLK8p388MHZ),
   .rst_n(ck_rst),
-  .clk32768(clk_32768)
+  .clk32768(CLK32768HZ)
 );
 ```
 
 其中，`sysclk_divider` 代码位于  `./src/sysclk_divider.v`，在顶层中例化。
 
-2. 复位，若遵照原顶层的设计，需要 `fpga_rst`与 `mcu_rst`两个复位。请注意，Genesys2开发板CPU Reset(R19)，按下时为低电平，松开为高电平，而其他按键(BTNx)则是按下时为高电平。因此时钟复位信号 `ck_rst`：
+2. 复位，若遵照原顶层的设计，需要 `fpga_rst`与 `mcu_rst`两个复位。⚠️ 请注意，Genesys2开发板CPU Reset(R19)，按下时为低电平，松开为高电平；而其他按键(BTNx)则是按下时为高电平。因此时钟复位信号 `ck_rst`：
 
 ```verilog
 assign ck_rst = fpga_rst & (~mcu_rst);
 ```
 
-👉 可简化为一个复位按键
+👉 当然，可简化为一个复位按键
 
 复位IP `ip_reset_sys`，注意 `ext_reset_in`设置低电平有效。
 
@@ -270,4 +272,4 @@ make mcs BOARD=genesys2
 
 ### 注意事项
 
-本仓库所提供的Genesys2顶层文件与约束相对应，你可自由对GPIO做约束修改。
+本仓库所提供的Genesys2顶层文件与约束相对应，用户可自由对GPIO做约束修改。

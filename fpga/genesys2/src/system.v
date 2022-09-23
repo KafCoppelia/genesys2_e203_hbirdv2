@@ -144,9 +144,9 @@ module system
 
   //=================================================
   // Clock & Reset
-  wire clk_8388;    // 8.388MHz clock
-  wire clk_16M;     // 16MHz clock
-  wire clk_32768;   // 32768KHz clock
+  wire CLK8p388MHZ; // 8.388MHz clock
+  wire CLK16MHZ;    // 16MHz clock
+  wire CLK32768HZ;  // 32768KHz clock
 
   assign ck_rst = fpga_rst & (~mcu_rst);
 
@@ -156,21 +156,21 @@ module system
     .clk_in1_p(CLK200M_p),
     .clk_in1_n(CLK200M_n),
 
-    .clk_out1(clk_16M), // 16 MHz, this clock we set to 16MHz
-    .clk_out2(clk_8388),
+    .clk_out1(CLK16MHZ), // 16 MHz, this clock we set to 16MHz
+    .clk_out2(CLK8p388MHZ),
     .locked(mmcm_locked)
   );
 
   // Clock divider
   sysclk_divider u_sysclk_divider(
-    .clk8388(clk_8388),
+    .clk8388(CLK8p388MHZ),
     .rst_n(ck_rst),
-    .clk32768(clk_32768)
+    .clk32768(CLK32768HZ)
   );
 
   reset_sys ip_reset_sys
   (
-    .slowest_sync_clk(clk_16M),
+    .slowest_sync_clk(CLK16MHZ),
     .ext_reset_in(ck_rst), // Active-low
     .aux_reset_in(1'b1),
     .mb_debug_sys_rst(1'b0),
@@ -488,10 +488,10 @@ module system
 
   e203_soc_top dut
   (
-    .hfextclk(clk_16M),
+    .hfextclk(CLK16MHZ),
     .hfxoscen(),
 
-    .lfextclk(CLK32768KHZ),
+    .lfextclk(CLK32768HZ),
     .lfxoscen(),
 
        // Note: this is the real SoC top AON domain slow clock
