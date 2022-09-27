@@ -1,6 +1,6 @@
 fpga_flist
 install
-vivado.*
+vivado*
 common.mk.real
 common.mk.github
 .ip_user_files
