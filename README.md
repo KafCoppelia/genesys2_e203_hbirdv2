@@ -30,7 +30,7 @@ input wire CLK200M_p, // Genesys2 has a differential LVDS 200MHz oscillator
 input wire CLK200M_n,
 ```
 
-时钟使用 `ip_mmcm` 生成16MHz与8.388MHz，再将8.388MHz通过简单的分频器获得32768Hz低频时钟。实际使用MMCM，无法精确获得8.388MHz。
+时钟使用 `ip_mmcm` 生成16MHz与8.388MHz，再将8.388MHz通过简单的分频器获得32768Hz低频时钟。实际使用MMCM，无法精确获得8.388MHz。注意 `e203_soc_top`的顶层两个时钟端口名称保持与声明一致。
 
 👉 可替换MMCM为PLL
 
@@ -58,6 +58,15 @@ sysclk_divider u_sysclk_divider(
   .rst_n(ck_rst),
   .clk32768(CLK32768HZ)
 );
+
+e203_soc_top dut
+  (
+    .hfextclk(CLK16MHZ),
+    .hfxoscen(),
+
+    .lfextclk(CLK32768HZ),
+    .lfxoscen(),
+    ...
 ```
 
 其中，`sysclk_divider` 代码位于  `./src/sysclk_divider.v`，在顶层中例化。

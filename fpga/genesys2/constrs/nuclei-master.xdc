@@ -439,4 +439,4 @@ set_property -dict { PACKAGE_PIN R21 IOSTANDARD LVCMOS33 IOB TRUE PULLUP TRUE } 
 #####         SPI Configurate Setting        #######
 set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
 set_property CONFIG_MODE SPIx4 [current_design]
-set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
+set_property BITSTREAM.CONFIG.CONFIGRATE 50 [current_design]
